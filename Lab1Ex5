@@ -1,0 +1,83 @@
+.data
+prompt:     .asciiz "Please input element "
+colon:      .asciiz ": "
+msg:        .asciiz "\nArray in reverse order:\n"
+space:      .asciiz " "
+newline:    .asciiz "\n"
+
+.align 2
+array:      .space 40      # 10 elements × 4 bytes = 40 bytes
+
+.text
+.globl main
+main:
+    la   $t0, array        # base address of array
+    li   $t1, 0            # i = 0
+
+# ---- Input Loop ----
+input_loop:
+    bge  $t1, 10, input_done  # if i >= 10, stop input
+
+    # print "Please input element "
+    li   $v0, 4
+    la   $a0, prompt
+    syscall
+
+    # print i
+    move $a0, $t1
+    li   $v0, 1
+    syscall
+
+    # print ": "
+    li   $v0, 4
+    la   $a0, colon
+    syscall
+
+    # read integer
+    li   $v0, 5
+    syscall
+
+    # store integer in array[i]
+    sw   $v0, 0($t0)
+
+    # move to next element
+    addi $t0, $t0, 4
+    addi $t1, $t1, 1
+    j    input_loop
+
+input_done:
+    # ---- Print Reverse ----
+    li   $v0, 4
+    la   $a0, msg
+    syscall
+
+    la   $t0, array        # reset base address
+    li   $t1, 9            # start from index 9
+    li   $t2, 4            # each element = 4 bytes
+
+print_loop:
+    blt  $t1, 0, done      # stop when i < 0
+
+    mul  $t3, $t1, $t2
+    add  $t4, $t0, $t3
+    lw   $a0, 0($t4)
+
+    # print value
+    li   $v0, 1
+    syscall
+
+    # print space
+    li   $v0, 4
+    la   $a0, space
+    syscall
+
+    addi $t1, $t1, -1
+    j    print_loop
+
+done:
+    li   $v0, 4
+    la   $a0, newline
+    syscall
+
+    li   $v0, 10
+    syscall
