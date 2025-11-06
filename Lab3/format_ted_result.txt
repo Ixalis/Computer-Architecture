@@ -1,0 +1,6 @@
+--Student personal information--
+Name: Davy    ewd
+ID: 22512332224433234
+Address: 
+Age: 168 Ly Thuong Kiet St
+Region: 9
